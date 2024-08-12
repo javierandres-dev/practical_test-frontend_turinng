@@ -1,3 +1,4 @@
+import { SheetsComponent } from '../components/SheetsComponents';
 export const SheetsPage = () => {
-  return <div>SheetsPage</div>;
+  return <SheetsComponent />;
 };

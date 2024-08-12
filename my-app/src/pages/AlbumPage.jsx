@@ -1,3 +1,4 @@
+import { AlbumComponent } from '../components/AlbumComponent';
 export const AlbumPage = () => {
-  return <div>AlbumPage</div>;
+  return <AlbumComponent />;
 };

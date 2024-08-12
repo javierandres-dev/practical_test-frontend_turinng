@@ -1,3 +1,7 @@
 export const HomePage = () => {
-  return <div>HomePage</div>;
+  return (
+    <h1 className="display-6">
+      Colección de láminas digitales basados en universo Star Wars.
+    </h1>
+  );
 };
