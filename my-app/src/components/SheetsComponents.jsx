@@ -6,10 +6,13 @@ import Button from 'react-bootstrap/Button';
 import { useEffect, useState } from 'react';
 
 export const SheetsComponent = () => {
-  const [data, setData] = useState([]);
+  const [envelope, setEnvelope] = useState([]);
   const [films, setFilms] = useState([]);
   const [people, setPeople] = useState([]);
   const [vehicles, setVehicles] = useState([]);
+  const [timerId, setTimerId] = useState(null);
+  const [timer, setTimer] = useState(null);
+  const [openedEnvelopes, setOpenedEnvelopes] = useState([]);
 
   useEffect(() => {
     axios.get(`${API}/films`).then((d) => setFilms(d.data.results));
@@ -18,84 +21,74 @@ export const SheetsComponent = () => {
   }, []);
 
   useEffect(() => {
-    console.log('data:', data);
-    console.log('films:', films);
-    console.log('people:', people);
-    console.log('vehicles:', vehicles);
-  }, [data, films, people, vehicles]);
+    console.log('envelope:', envelope);
+    console.log('openedEnvelopes:', openedEnvelopes);
+  }, [envelope, openedEnvelopes]);
+
+  useEffect(() => {
+    if (timer < 1) {
+      clearInterval(timerId);
+      setTimer(null);
+    }
+  }, [timer]);
 
   const API = 'https://swapi.dev/api/';
   const envelopes = [
     {
       id: 1,
       sheets: [],
-      btn: 'Abrir sobre 1',
     },
     {
       id: 2,
       sheets: [],
-      btn: 'Abrir sobre 2',
     },
     {
       id: 3,
       sheets: [],
-      btn: 'Abrir sobre 3',
     },
     {
       id: 4,
       sheets: [],
-      btn: 'Abrir sobre 4',
     },
   ];
 
-  const handleData = () => {
-    console.log('handleData...');
+  const startTimer = () => {
+    let seconds = 6;
+    const intervalId = setInterval(() => {
+      setTimer(seconds);
+      seconds--;
+    }, 1000);
+    setTimerId(intervalId);
+  };
+
+  const openEnvelope = (e) => {
+    console.log('openEnvelope...');
+    const obj = { movie: [], characters: [], naves: [] };
     const configuration = Math.ceil(Math.random() * 2);
     console.log('configuration:', configuration);
-    console.log('films.length:', films.length);
-    console.log('people.length:', people.length);
-    console.log('vehicles.length:', vehicles.length);
-    const obj = { movie: [], characters: [], naves: [] };
-    let idx = null;
     if (configuration === 1) {
-      idx = Math.floor(Math.random() * films.length);
-      console.log('idx:', idx);
-      obj.movie.push(films[idx]);
+      obj.movie.push(films[Math.floor(Math.random() * films.length)]);
 
-      for (let i = 0; i < 3; i++) {
-        idx = Math.floor(Math.random() * people.length);
-        console.log('idx:', idx);
-        obj.characters.push(people[idx]);
-      }
+      for (let i = 0; i < 3; i++)
+        obj.characters.push(people[Math.floor(Math.random() * people.length)]);
 
-      idx = Math.floor(Math.random() * vehicles.length);
-      console.log('idx:', idx);
-      obj.naves.push(vehicles[idx]);
+      obj.naves.push(vehicles[Math.floor(Math.random() * vehicles.length)]);
     } else if (configuration === 2) {
-      for (let i = 0; i < 3; i++) {
-        idx = Math.floor(Math.random() * people.length);
-        console.log('idx:', idx);
-        obj.characters.push(people[idx]);
-      }
+      for (let i = 0; i < 3; i++)
+        obj.characters.push(people[Math.floor(Math.random() * people.length)]);
 
-      for (let i = 0; i < 2; i++) {
-        idx = Math.floor(Math.random() * vehicles.length);
-        console.log('idx:', idx);
-        obj.naves.push(vehicles[idx]);
-      }
+      for (let i = 0; i < 2; i++)
+        obj.naves.push(vehicles[Math.floor(Math.random() * vehicles.length)]);
     }
-    setData(obj);
+    setEnvelope(obj);
+    setOpenedEnvelopes([...openedEnvelopes, +e.target.id]);
+    startTimer();
   };
 
   const getData = () => {
     console.log('getData...:');
     /* axios.get(`${API}/people`).then((d) => setPeople(d.data.results));
     axios.get(`${API}/vehicles`).then((d) => setVehicles(d.data.results)); */
-  };
-
-  const handleClick = (e) => {
-    console.log('e:', e.target.id);
-    handleData();
   };
 
   const cards = envelopes.map((envelope) => (
@@ -107,9 +100,20 @@ export const SheetsComponent = () => {
           alt="Imagen sobre"
         />
         <Card.Body>
-          <Button variant="primary" id={envelope.id} onClick={handleClick}>
-            {envelope.btn}
-          </Button>
+          {openedEnvelopes.includes(envelope.id) ? (
+            <Button variant="secondary" id={envelope.id} disabled>
+              Sobre #{envelope.id}
+            </Button>
+          ) : (
+            <Button
+              variant="primary"
+              id={envelope.id}
+              onClick={openEnvelope}
+              disabled={timer ? true : false}
+            >
+              Abir sobre #{envelope.id}
+            </Button>
+          )}
         </Card.Body>
       </Card>
     </Col>
@@ -133,6 +137,20 @@ export const SheetsComponent = () => {
         aleatorias.
       </p>
       <Row>{cards}</Row>
+      {timer && (
+        <>
+          <h2>
+            Podrás abrir un nuevo sobre en
+            <span>
+              {timer === 60
+                ? ' 1 minuto'
+                : timer > 1
+                ? ` ${timer} segundos`
+                : ` ${timer} segundo`}
+            </span>
+          </h2>
+        </>
+      )}
     </>
   );
 };
