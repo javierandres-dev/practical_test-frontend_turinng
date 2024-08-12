@@ -5,7 +5,9 @@ export const MainLayout = () => {
   return (
     <>
       <NavigationComponent />
-      <Outlet />
+      <div className="container">
+        <Outlet />
+      </div>
     </>
   );
 };
