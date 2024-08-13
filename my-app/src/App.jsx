@@ -10,6 +10,7 @@ import { MainLayout } from './layouts/MainLayout';
 import { HomePage } from './pages/HomePage';
 import { AlbumPage } from './pages/AlbumPage';
 import { SheetsPage } from './pages/SheetsPage';
+import { GlobalProvider } from './contexts/GlobalProvider';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,7 +23,11 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <GlobalProvider>
+      <RouterProvider router={router} />
+    </GlobalProvider>
+  );
 }
 
 export default App;
