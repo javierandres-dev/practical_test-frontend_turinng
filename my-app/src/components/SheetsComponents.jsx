@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import { GlobalContext } from '../contexts/GlobalContext';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import axios from 'axios';
+import { GlobalContext } from '../contexts/GlobalContext';
+import { SheetComponent } from './SheetComponent';
 
 export const SheetsComponent = () => {
   const { gTim, gOpe } = useContext(GlobalContext);
@@ -14,65 +15,84 @@ export const SheetsComponent = () => {
   const [films, setFilms] = useState([]);
   const [people, setPeople] = useState([]);
   const [vehicles, setVehicles] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+
+  const API = 'https://swapi.dev/api/';
+  const envelopes = [1, 2, 3, 4];
 
   useEffect(() => {
-    axios.get(`${API}/films`).then((d) => setFilms(d.data.results));
-    axios.get(`${API}/people`).then((d) => setPeople(d.data.results));
-    axios.get(`${API}/vehicles`).then((d) => setVehicles(d.data.results));
+    getData(true);
   }, []);
 
   useEffect(() => {
-    console.log('envelope:', envelope);
     console.log('openedEnvelopes:', openedEnvelopes);
-  }, [envelope, openedEnvelopes]);
+  }, [openedEnvelopes]);
 
-  const API = 'https://swapi.dev/api/';
-  const envelopes = [
-    {
-      id: 1,
-      sheets: [],
-    },
-    {
-      id: 2,
-      sheets: [],
-    },
-    {
-      id: 3,
-      sheets: [],
-    },
-    {
-      id: 4,
-      sheets: [],
-    },
-  ];
+  const closeModal = () => setShowModal(false);
+  const openModal = () => setShowModal(true);
+
+  const getSheetNumber = (url, key) => url.split(`${key}/`)[1].slice(0, -1);
 
   const openEnvelope = (e) => {
-    const obj = { movie: [], characters: [], naves: [] };
+    const arr = [];
+    for (let i = 0; i < 3; i++) {
+      const character = people[Math.floor(Math.random() * people.length)];
+      const sheetNumber = getSheetNumber(character.url, 'people');
+      arr.push({
+        ...character,
+        albumSection: 'Personajes ⭐',
+        categoryGroup: sheetNumber > 20 ? 'Regular' : 'Especial',
+        sheetNumber,
+      });
+    }
+    const nave = vehicles[Math.floor(Math.random() * vehicles.length)];
+    const sheetNumber = getSheetNumber(nave.url, 'vehicles');
+    arr.push({
+      ...nave,
+      albumSection: 'Naves ☄️',
+      categoryGroup: sheetNumber > 10 ? 'Regular' : 'Especial',
+      sheetNumber,
+    });
     const configuration = Math.ceil(Math.random() * 2);
     if (configuration === 1) {
-      obj.movie.push(films[Math.floor(Math.random() * films.length)]);
-      for (let i = 0; i < 3; i++)
-        obj.characters.push(people[Math.floor(Math.random() * people.length)]);
-      obj.naves.push(vehicles[Math.floor(Math.random() * vehicles.length)]);
+      const movie = films[Math.floor(Math.random() * films.length)];
+      const sheetNumber = getSheetNumber(movie.url, 'films');
+      arr.push({
+        ...movie,
+        albumSection: 'Películas 🎥',
+        categoryGroup: 'Especial',
+        sheetNumber,
+      });
     } else if (configuration === 2) {
-      for (let i = 0; i < 3; i++)
-        obj.characters.push(people[Math.floor(Math.random() * people.length)]);
-      for (let i = 0; i < 2; i++)
-        obj.naves.push(vehicles[Math.floor(Math.random() * vehicles.length)]);
+      const nave = vehicles[Math.floor(Math.random() * vehicles.length)];
+      const sheetNumber = getSheetNumber(nave.url, 'vehicles');
+      arr.push({
+        ...nave,
+        albumSection: 'Naves ☄️',
+        categoryGroup: sheetNumber > 10 ? 'Regular' : 'Especial',
+        sheetNumber,
+      });
     }
-    setEnvelope(obj);
+    setEnvelope(arr);
     setOpenedEnvelopes([...openedEnvelopes, +e.target.id]);
+    openModal();
+    getData();
     setTimer(6);
   };
 
-  const getData = () => {
-    console.log('getData...:');
-    /* axios.get(`${API}/people`).then((d) => setPeople(d.data.results));
-    axios.get(`${API}/vehicles`).then((d) => setVehicles(d.data.results)); */
+  const getData = (firstTime = false) => {
+    if (firstTime)
+      axios.get(`${API}/films`).then((d) => setFilms(d.data.results));
+    axios
+      .get(`${API}/people/?page=${Math.ceil(Math.random() * 9)}`)
+      .then((d) => setPeople(d.data.results));
+    axios
+      .get(`${API}/vehicles/?page=${Math.ceil(Math.random() * 4)}`)
+      .then((d) => setVehicles(d.data.results));
   };
 
   const cards = envelopes.map((envelope) => (
-    <Col key={envelope.id}>
+    <Col key={envelope}>
       <Card style={{ width: '150px' }}>
         <Card.Img
           variant="top"
@@ -80,18 +100,18 @@ export const SheetsComponent = () => {
           alt="Imagen sobre"
         />
         <Card.Body>
-          {openedEnvelopes.includes(envelope.id) ? (
-            <Button variant="secondary" id={envelope.id} disabled>
-              Sobre #{envelope.id}
+          {openedEnvelopes.includes(envelope) ? (
+            <Button variant="secondary" id={envelope} disabled>
+              Sobre #{envelope} no disponible
             </Button>
           ) : (
             <Button
               variant="primary"
-              id={envelope.id}
+              id={envelope}
               onClick={openEnvelope}
               disabled={timer ? true : false}
             >
-              Abir sobre #{envelope.id}
+              Abir sobre #{envelope}
             </Button>
           )}
         </Card.Body>
@@ -131,6 +151,11 @@ export const SheetsComponent = () => {
           </h2>
         </>
       ) : null}
+      <SheetComponent
+        envelope={envelope}
+        showModal={showModal}
+        closeModal={closeModal}
+      />
     </>
   );
 };
