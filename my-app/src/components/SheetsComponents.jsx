@@ -76,7 +76,7 @@ export const SheetsComponent = () => {
     setOpenedEnvelopes([...openedEnvelopes, +e.target.id]);
     openModal();
     getData();
-    setTimer(6);
+    setTimer(60);
   };
 
   const getData = (firstTime = false) => {
@@ -96,7 +96,7 @@ export const SheetsComponent = () => {
 
   const cards = envelopes.map((envelope) => (
     <Col key={envelope}>
-      <Card style={{ width: '150px' }}>
+      <Card style={{ width: '150px', margin: 'auto' }}>
         <Card.Img
           variant="top"
           src="/src/assets/sheets.png"
@@ -124,7 +124,7 @@ export const SheetsComponent = () => {
 
   return (
     <>
-      <h1>Obtener Láminas</h1>
+      <h1 className="text-center">Obtener Láminas</h1>
       <p>
         Solo se puede abrir un sobre a la vez, cada sobre contiene 5 láminas
       </p>
@@ -139,7 +139,7 @@ export const SheetsComponent = () => {
         Tanto la configuración del sobre como las láminas que contienen son
         aleatorias.
       </p>
-      <Row className="my-5">{cards}</Row>
+      <Row className="my-5 gap-2">{cards}</Row>
       {timer > 0 ? (
         <>
           <h2>
@@ -160,9 +160,11 @@ export const SheetsComponent = () => {
         closeModal={closeModal}
       />
       {openedEnvelopes.length === envelopes.length && timer === 0 && (
-        <Button variant="info" onClick={addEnvelopes} className="mb-5">
-          Obtener más sobres
-        </Button>
+        <div className="mb-5 text-center">
+          <Button variant="info" onClick={addEnvelopes}>
+            Obtener más sobres
+          </Button>
+        </div>
       )}
     </>
   );
