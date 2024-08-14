@@ -139,10 +139,9 @@ export const SheetsComponent = () => {
         Tanto la configuración del sobre como las láminas que contienen son
         aleatorias.
       </p>
-      <Row className="my-5 gap-2">{cards}</Row>
       {timer > 0 ? (
         <>
-          <h2>
+          <h2 className="text-center my-5">
             Podrás abrir un nuevo sobre en
             <span>
               {timer === 60
@@ -154,11 +153,6 @@ export const SheetsComponent = () => {
           </h2>
         </>
       ) : null}
-      <SheetComponent
-        envelope={envelope}
-        showModal={showModal}
-        closeModal={closeModal}
-      />
       {openedEnvelopes.length === envelopes.length && timer === 0 && (
         <div className="mb-5 text-center">
           <Button variant="info" onClick={addEnvelopes}>
@@ -166,6 +160,12 @@ export const SheetsComponent = () => {
           </Button>
         </div>
       )}
+      <Row className="my-5 gap-2">{cards}</Row>
+      <SheetComponent
+        envelope={envelope}
+        showModal={showModal}
+        closeModal={closeModal}
+      />
     </>
   );
 };
