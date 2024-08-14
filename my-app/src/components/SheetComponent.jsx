@@ -86,7 +86,9 @@ export const SheetComponent = ({ envelope, showModal, closeModal }) => {
         <Modal.Title>Láminas</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="d-flex gap-2">{content}</div>
+        <div className="d-flex flex-column gap-5 flex-lg-row gap-lg-3">
+          {content}
+        </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={closeModal}>
