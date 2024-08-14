@@ -1,16 +1,17 @@
 import { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import axios from 'axios';
 import { GlobalContext } from '../contexts/GlobalContext';
 import { SheetComponent } from './SheetComponent';
 
 export const SheetsComponent = () => {
-  const { gTim, gOpe } = useContext(GlobalContext);
-  const [timer, setTimer] = gTim;
+  const { gEnv, gOpe, gTim } = useContext(GlobalContext);
+  const [envelopes, setEnvelopes] = gEnv;
   const [openedEnvelopes, setOpenedEnvelopes] = gOpe;
+  const [timer, setTimer] = gTim;
   const [envelope, setEnvelope] = useState([]);
   const [films, setFilms] = useState([]);
   const [people, setPeople] = useState([]);
@@ -18,19 +19,13 @@ export const SheetsComponent = () => {
   const [showModal, setShowModal] = useState(false);
 
   const API = 'https://swapi.dev/api/';
-  const envelopes = [1, 2, 3, 4];
 
   useEffect(() => {
     getData(true);
   }, []);
 
-  useEffect(() => {
-    console.log('openedEnvelopes:', openedEnvelopes);
-  }, [openedEnvelopes]);
-
   const closeModal = () => setShowModal(false);
   const openModal = () => setShowModal(true);
-
   const getSheetNumber = (url, key) => url.split(`${key}/`)[1].slice(0, -1);
 
   const openEnvelope = (e) => {
@@ -40,18 +35,20 @@ export const SheetsComponent = () => {
       const sheetNumber = getSheetNumber(character.url, 'people');
       arr.push({
         ...character,
-        albumSection: 'Personajes ⭐',
+        albumSection: 'Personajes',
         categoryGroup: sheetNumber > 20 ? 'Regular' : 'Especial',
         sheetNumber,
+        sheetId: `c_${sheetNumber}`,
       });
     }
     const nave = vehicles[Math.floor(Math.random() * vehicles.length)];
     const sheetNumber = getSheetNumber(nave.url, 'vehicles');
     arr.push({
       ...nave,
-      albumSection: 'Naves ☄️',
+      albumSection: 'Naves',
       categoryGroup: sheetNumber > 10 ? 'Regular' : 'Especial',
       sheetNumber,
+      sheetId: `n_${sheetNumber}`,
     });
     const configuration = Math.ceil(Math.random() * 2);
     if (configuration === 1) {
@@ -59,18 +56,20 @@ export const SheetsComponent = () => {
       const sheetNumber = getSheetNumber(movie.url, 'films');
       arr.push({
         ...movie,
-        albumSection: 'Películas 🎥',
+        albumSection: 'Películas',
         categoryGroup: 'Especial',
         sheetNumber,
+        sheetId: `m_${sheetNumber}`,
       });
     } else if (configuration === 2) {
       const nave = vehicles[Math.floor(Math.random() * vehicles.length)];
       const sheetNumber = getSheetNumber(nave.url, 'vehicles');
       arr.push({
         ...nave,
-        albumSection: 'Naves ☄️',
+        albumSection: 'Naves',
         categoryGroup: sheetNumber > 10 ? 'Regular' : 'Especial',
         sheetNumber,
+        sheetId: `n_${sheetNumber}`,
       });
     }
     setEnvelope(arr);
@@ -89,6 +88,10 @@ export const SheetsComponent = () => {
     axios
       .get(`${API}/vehicles/?page=${Math.ceil(Math.random() * 4)}`)
       .then((d) => setVehicles(d.data.results));
+  };
+
+  const addEnvelopes = () => {
+    setEnvelopes(Array.from({ length: envelopes.length + 4 }, (e, i) => i + 1));
   };
 
   const cards = envelopes.map((envelope) => (
@@ -136,7 +139,7 @@ export const SheetsComponent = () => {
         Tanto la configuración del sobre como las láminas que contienen son
         aleatorias.
       </p>
-      <Row>{cards}</Row>
+      <Row className="my-5">{cards}</Row>
       {timer > 0 ? (
         <>
           <h2>
@@ -156,6 +159,11 @@ export const SheetsComponent = () => {
         showModal={showModal}
         closeModal={closeModal}
       />
+      {openedEnvelopes.length === envelopes.length && timer === 0 && (
+        <Button variant="info" onClick={addEnvelopes} className="mb-5">
+          Obtener más sobres
+        </Button>
+      )}
     </>
   );
 };
