@@ -3,8 +3,10 @@ import { GlobalContext } from './GlobalContext';
 
 // eslint-disable-next-line react/prop-types
 export const GlobalProvider = ({ children }) => {
-  const [timer, setTimer] = useState(0);
+  const [album, setAlbum] = useState([]);
+  const [envelopes, setEnvelopes] = useState([1, 2, 3, 4]);
   const [openedEnvelopes, setOpenedEnvelopes] = useState([]);
+  const [timer, setTimer] = useState(0);
 
   useEffect(() => {
     let intervalId = null;
@@ -22,8 +24,10 @@ export const GlobalProvider = ({ children }) => {
   return (
     <GlobalContext.Provider
       value={{
-        gTim: [timer, setTimer],
+        gAlb: [album, setAlbum],
+        gEnv: [envelopes, setEnvelopes],
         gOpe: [openedEnvelopes, setOpenedEnvelopes],
+        gTim: [timer, setTimer],
       }}
     >
       {children}
