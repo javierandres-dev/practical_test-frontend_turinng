@@ -1,6 +1,6 @@
 # practical_test-frontend_turinng
 This project is based on "frontend web developer challenge test" proposed by turinng.  
-How does it look? Take a look at []()  
+How does it look? Take a look at [Colección de láminas digitales basados en universo Star Wars](https://practical-test-frontend-turinng.netlify.app/)
 ## Jobs ― Interview
 [Requirements](./docs/requirements.pdf)
 ## Stack
