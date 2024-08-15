@@ -99,7 +99,7 @@ export const SheetsComponent = () => {
       <Card style={{ width: '150px', margin: 'auto' }}>
         <Card.Img
           variant="top"
-          src="/src/assets/sheets.png"
+          src="https://raw.githubusercontent.com/javierandres-dev/practical_test-frontend_turinng/main/my-app/src/assets/sheets.png"
           alt="Imagen sobre"
         />
         <Card.Body>
