@@ -4,7 +4,9 @@ How does it look? Take a look at [Colección de láminas digitales basados en un
 ## Jobs ― Interview
 [Requirements](./docs/requirements.pdf)
 ## Stack
+- Vite
 - React
+- React Router DOM
 - Axios
 - Bootstrap
 ### Third-Party API
